@@ -1,0 +1,46 @@
+   terraform {
+     required_providers {
+       yandex = {
+         source  = "yandex-cloud/yandex"
+         version = "~> 0.140"
+       }
+     }
+   }
+
+   provider "yandex" {
+     cloud_id  = var.cloud_id
+     folder_id = var.folder_id
+     service_account_key_file = file("./keys.json")
+   }
+   
+   
+resource "yandex_compute_instance" "vm_instance" {
+  name            = "my-vm-01"
+  zone            = "ru-central1-a"
+  hostname    = "my-vm-01" #формирует FDQN имя хоста, без hostname будет сгенрировано случаное имя.
+  platform_id = "standard-v3"
+
+  resources {
+    cores  = 2
+    memory = 1
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd85im9midded6jlfak4"
+      size     = 10
+    }
+  }
+
+  network_interface {
+    subnet_id = var.subnet_id
+    nat       = true
+  }
+
+  metadata = {
+    ssh-keys = var.ssh_public_key
+  }
+
+  service_account_id = var.service_account_id
+}

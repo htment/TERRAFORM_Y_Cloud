@@ -1,0 +1,93 @@
+terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "~> 0.140"  # Убедитесь, что версия актуальна
+    }
+  }
+}
+
+
+provider "yandex" {
+  # token                    = "do not use!!!"
+  cloud_id                 = var.cloud_id
+  folder_id                = var.folder_id
+  service_account_key_file = file("~/.yandex_sa_key.pem")
+   
+}
+
+resource "yandex_compute_instance" "vm_instance" {
+  name            = "my-vm-01"           # Имя виртуальной машины
+  zone            = "ru-central1-a"       # Зона
+
+  resources {
+    cores  = 2                              # Количество ядер
+    memory = 1024                           # Объем памяти в МБ
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8g5c5h8g3j4k1q6q7d"    # ID образа (например, Debian 11)
+      size     = 10                        # Размер диска в ГБ
+    }
+  }
+
+  network_interface {
+    subnet_id = var.subnet_id              # ID подсети
+    nat       = true                       # Включаем NAT для доступа к интернету
+  }
+
+  metadata = {
+    ssh-keys = var.ssh_public_key          # Публичный SSH-ключ
+  }
+
+  # Укажите прерываемую ВМ здесь
+#  preemptible = true                        # Обозначаем, что ВМ будет прерываемой
+
+  service_account_id = var.service_account_id # ID сервисного аккаунта
+}
+
+## Ресурс для создания правила оповещения при превышении нагрузки на CPU (предупреждение)
+#resource "yandex_monitoring_alert_rule" "cpu_warn_alert" {
+#  name        = "CPU Warn Alert"  # Имя правила оповещения
+#  description = "Alert when CPU utilization exceeds 70% for 5 minutes"  # Описание правила
+#
+#  conditions {
+#    condition {
+#      type = "threshold"  # Тип условия - пороговое значение
+#      threshold {
+#        comparison = "gt"   # Сравнение: больше
+#        value      = 70     # Пороговое значение (70%)
+#        duration   = "5m"   # Длительность превышения порога (5 минут)
+#      }
+#      metric {
+#        filter = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/write_bytes_count\""  # Фильтр для метрики
+#      }
+#    }
+#  }
+
+#  notification_channel_ids = [var.notification_channel_id]  # ID канала уведомлений из переменной
+#}
+#
+## Ресурс для создания правила оповещения при критической нагрузке на CPU (тревога)
+#resource "yandex_monitoring_alert_rule" "cpu_alarm_alert" {
+#  name        = "CPU Alarm Alert"  # Имя правила тревоги
+#  description = "Alert when CPU utilization exceeds 90% for 5 minutes"  # Описание правила
+#
+#  conditions {
+#    condition {
+#      type = "threshold"  # Тип условия - пороговое значение
+#      threshold {
+#        comparison = "gt"   # Сравнение: больше
+#        value      = 90     # Пороговое значение (90%)
+#        duration   = "5m"   # Длительность превышения порога (5 минут)
+#      }
+#      metric {
+#        filter = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/write_bytes_count\""  # Фильтр для метрики
+#      }
+#    }
+#  }
+#
+#  notification_channel_ids = [var.notification_channel_id]  # ID канала уведомлений из переменной
+#}
+#

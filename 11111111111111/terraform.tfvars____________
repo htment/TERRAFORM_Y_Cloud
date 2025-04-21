@@ -1,0 +1,9 @@
+#В этом файле вы укажете значения для всех переменных:
+#service_account_key_file = file("~/.authorized_key.json")
+#yandex_cloud_token = file("~/.authorized_key.json")
+cloud_id           = "b1gm7peurbts7d700eq1"
+folder_id          = "b1gqe649cpgjsd7qhnu5"
+subnet_id          = "e9b7te7nf7kgt2kp0ump"
+ssh_public_key     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkUGL+lC/WOKOpynBHHJnPjy7wpNDveCwjfKffteMjk art@debian64"
+service_account_id = "aje0sginsnqpkkapdukv"
+notification_channel_id = "fbebvtpo6labhoav1h62"
