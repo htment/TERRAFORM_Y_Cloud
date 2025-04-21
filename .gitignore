@@ -1,2 +1,3 @@
 keys.json
 keys copy.json
+.terraform.lock.hcl/
