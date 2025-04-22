@@ -26,6 +26,11 @@ resource "yandex_compute_instance" "vm_instance" {
     core_fraction = 20
   }
 
+
+  scheduling_policy {
+    preemptible = true
+  }
+
   boot_disk {
     initialize_params {
       image_id = "fd85im9midded6jlfak4"
@@ -38,9 +43,17 @@ resource "yandex_compute_instance" "vm_instance" {
     nat       = true
   }
 
+  # metadata = {
+  #   ssh-keys = var.ssh_public_key
+  # }
+  
   metadata = {
-    ssh-keys = var.ssh_public_key
+    user-data          = file("./cloud-init.yml")
+    serial-port-enable = 1
+    "monitoring-agent" = "1" # Важно! Это добавит агент Yandex Monitoring.
   }
+  
 
   service_account_id = var.service_account_id
+  
 }
